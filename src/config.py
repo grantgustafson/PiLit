@@ -5,6 +5,7 @@ LOGGING_DIR = os.path.normpath(os.path.join(CURR_DIR, 'logs'))
 assert os.path.isdir(LOGGING_DIR)
 
 MODULE_SCHEMA_PATH = 'schema/module_schema.json'
+MODULE_FILE_PATH = 'modules.json'
 
 LOG_CONFIG = {'version': 1,
               'formatters': {

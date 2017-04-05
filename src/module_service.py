@@ -1,7 +1,10 @@
 from flask import Blueprint, jsonify, request
+from jsonschema import validate
+import json
 
 from config import (
-    LOGGER
+    LOGGER,
+    MODULE_SCHEMA_PATH,
 )
 
 modules = Blueprint('modules', __name__)
@@ -13,6 +16,15 @@ def get_modules():
                             {'name' : 'kitchen', 'online': False}],
                'unconfiguredModules' : [{'MAC' : 'blah blah'}]}
     return jsonify(modules)
+
+def create_or_update_module(data):
+    with open(MODULE_SCHEMA_PATH) as f:
+        schema = json.load(f)
+    try:
+        validate(data, schema)
+        LOGGER.info('Module {}: new data validated').format(data['MAC'])
+    except jsonschema.exceptions.ValidationError as ve:
+        LOGGER.error('New Module data error: {}').format(ve)
 
 @modules.route('/register', methods=['POST'])
 def register_module():
@@ -35,3 +47,6 @@ def register_module():
 
 def get_module_ips():
     return module_ips
+
+if __name__ == '__main__':
+    create_or_update_module(None)
