@@ -1,0 +1,10 @@
+{
+  "type" : "object",
+  "properties" : {
+    "name" : {"type" : "string"},
+    "MAC" : {"type" : "string"},
+    "numLEDs" : {"type" : "number"},
+    "location" : {"type" : "string"}
+    }
+  }
+}
