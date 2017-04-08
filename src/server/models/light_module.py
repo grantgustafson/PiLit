@@ -22,6 +22,12 @@ class Light_Module:
             data[key] = getattr(self, key)
         return data
 
+    def to_web_dict(self):
+        data = self.to_dict()
+        data['ip'] = self.ip
+        return data
+
+
     def __repr__(self):
         return '<Module {} ({}) location: {} numLEDs: {}'.format(self.name,
                                                                  self.MAC,

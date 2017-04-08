@@ -83,6 +83,9 @@ class Modules:
         with open(self._module_file_path, 'w') as f:
             f.write(module_json)
 
+    def get_model_json(self):
+        return [o.to_web_dict() for o in self.modules]
+
     def validate_modules(self, modules):
         for module in modules:
             if not self.validate_module(module):
@@ -101,7 +104,3 @@ class Modules:
         if not os.path.isfile(self._module_file_path):
             LOGGER.info('module file does not exist, creating it')
             self._create_module_file()
-
-if __name__ == '__main__':
-    modules = Modules()
-    data = {'name': 'test'}
