@@ -7,6 +7,8 @@ assert os.path.isdir(LOGGING_DIR)
 MODULE_SCHEMA_PATH = 'schema/module_schema.json'
 MODULE_FILE_PATH = 'modules.json'
 
+HOSTS_PATH = 'hosts.txt'
+
 LOG_CONFIG = {'version': 1,
               'formatters': {
                   'request': {
