@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { HashRouter as Router, Route } from 'react-router-dom';
 import Module from './Module.js'
 import ModuleContainer from './ModuleContainer.jsx'
+import ModuleSetup from './ModuleSetup.jsx'
 import MainNav from './Nav.js';
 
 const Settings = () => <h1>Settings</h1>;
@@ -12,8 +13,6 @@ class Main extends React.Component{
         return (
            <div className="container">
            <MainNav />
-           <div id="2">
-           </div>
             {this.props.children}
            </div>
             )
@@ -25,6 +24,7 @@ ReactDOM.render(
     <Main>
       <Route exact path="/" component={ModuleContainer} />
       <Route path="/settings" component={Settings} />
+      <Route path="/module_setup/:id" component={ModuleSetup} />
     </Main>
   </Router>,
   document.getElementById('app'));

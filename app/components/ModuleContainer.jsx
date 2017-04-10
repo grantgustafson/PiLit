@@ -28,7 +28,7 @@ export default class ModuleContainer extends React.Component {
     if (this.state.modules) {
       return (
         <div id="module-container">
-          <div className="jumbotron">
+          <div className="jumbotron text-center">
             <div className="container">
               <h1 className="display-3">Light Modules</h1>
             </div>

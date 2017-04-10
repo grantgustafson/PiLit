@@ -34,12 +34,21 @@ class Modules:
         self._write_modules()
 
     def add_unconfigured_host(self, name, mac, ip):
-        self._unconfigured_hosts[mac] = ip
+        self._unconfigured_hosts[mac] = (name, ip)
+
+    def _unconfigured_to_json(self, mac):
+        return {'MAC': mac,
+                'ip' : self._unconfigured_hosts[mac][1],
+                'name' : self._unconfigured_hosts[mac][0]}
 
     def get_unconfigured_json(self):
-        return [{'MAC': k,
-                'ip' : self._unconfigured_hosts[k],
-                'name' : k } for k in self._unconfigured_hosts]
+        return [self._unconfigured_to_json(k) for k in self._unconfigured_hosts]
+
+    def get_host(self, name):
+        for k in self._unconfigured_hosts:
+            if self._unconfigured_hosts[k][0] == name:
+                return self._unconfigured_to_json(k)
+        return None
 
     def create(self, data):
         if self.validate_module(data):

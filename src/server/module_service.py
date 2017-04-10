@@ -19,6 +19,15 @@ def get_modules():
              'unconfiguredModules' : modules.get_unconfigured_json() }
     return jsonify(data)
 
+@module_service.route('/get_host/<host>', methods=['GET'])
+def get_host(host):
+    host = modules.get_host(host)
+    if host:
+        data = { 'success' : True, 'host': host}
+    else:
+        data = { 'success' : False }
+    return jsonify(data)
+
 def create_or_update_module(data):
     with open(MODULE_SCHEMA_PATH) as f:
         schema = json.load(f)
@@ -28,23 +37,11 @@ def create_or_update_module(data):
     except jsonschema.exceptions.ValidationError as ve:
         LOGGER.error('New Module data error: {}').format(ve)
 
-@module_service.route('/register', methods=['POST'])
-def register_module():
-    if 'ip' not in request.form or 'MAC' not in request.form:
-        return jsonify({'success': False, 'message': 'ip or MAC not in request'})
+@module_service.route('/module_setup', methods=['POST'])
+def setup():
+    print json.loads(request.data)
+    return jsonify({'success' : True})
 
-    ip = request.form['ip']
-    mac = request.form['MAC']
-
-    module = modules.get(MAC=mac)
-    if not module:
-        unconfigured_modules[mac] = ip
-    else:
-        module.ip = ip
-
-
-    d = {'success': True}
-    return jsonify(d)
 
 
 def get_module_ips():
