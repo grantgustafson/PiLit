@@ -33,7 +33,7 @@ class Modules:
             self._name_map[module.name] = module
         self._write_modules()
 
-    def add_unconfigured_host(self, mac, ip):
+    def add_unconfigured_host(self, name, mac, ip):
         self._unconfigured_hosts[mac] = ip
 
     def get_unconfigured_json(self):

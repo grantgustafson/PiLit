@@ -24,10 +24,11 @@ class Hosts:
         try:
             r = requests.get(URL.format(hostname))
             print '{} online'.format(hostname)
+            data = r.json()
             self._host_status[hostname] = True
-
+            print data
             if not module:
-                self._modules.add_unconfigured_host(hostname, '0.0.0.3')
+                self._modules.add_unconfigured_host(hostname, data['MAC'], data['ip'])
         except requests.ConnectionError as ce:
             print '{} not online'.format(hostname)
             self._host_status[hostname] = False
