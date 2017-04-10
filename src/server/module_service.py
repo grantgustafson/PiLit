@@ -11,13 +11,12 @@ from config import (
 module_service = Blueprint('module_service', __name__)
 module_ips = {}
 modules = Modules()
-unconfigured_modules = {}
 
 
 @module_service.route('/get_modules', methods=['GET'])
 def get_modules():
-    data = { 'configuredModules' : modules.get_model_json }
-    data['unconfiguredModules'] = [{'MAC' : k, 'ip' : unconfigured_modules[k] } for k in unconfigured_modules]
+    data = { 'configuredModules' : modules.get_model_json(),
+             'unconfiguredModules' : modules.get_unconfigured_json() }
     return jsonify(data)
 
 def create_or_update_module(data):

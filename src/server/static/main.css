@@ -1,0 +1,11 @@
+.box {
+  background:#fff;
+  transition:all 0.2s ease;
+  border:2px solid #dadada;
+  margin-top: 10px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  background-clip: padding-box;
+  padding:20px 20px 20px 20px;
+  min-height:100px;
+}

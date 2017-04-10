@@ -1,11 +1,12 @@
 import React from 'react';
 import Module from './Module.js';
+import UnconfiguredModule from './UnconfiguredModule.jsx';
 
 export default class ModuleContainer extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {modules: null};
+    this.state = {modules: null, unconfiguredModules: null};
   }
 
   componentWillMount() {
@@ -16,12 +17,13 @@ export default class ModuleContainer extends React.Component {
   }).then(function(j) {
   	// Yay, `j` is a JavaScript object
   	console.log(j);
-    self.setState({modules: j.configuredModules});
+    self.setState({modules: j.configuredModules,
+                   unconfiguredModules: j.unconfiguredModules});
   });
   }
 
   render() {
-    console.log('state: ')
+    console.log('state : ')
     console.log(this.state);
     if (this.state.modules) {
       return (
@@ -34,6 +36,9 @@ export default class ModuleContainer extends React.Component {
           <div className="row">
           {this.state.modules.map(function(module) {
             return <Module key={module.name} module={module}/>
+          })}
+          {this.state.unconfiguredModules.map(function(module) {
+            return <UnconfiguredModule key={module.name} module={module}/>
           })}
           </div>
         </div>

@@ -14,6 +14,7 @@ class Light_Module:
         self.location = data['location']
         self.numLEDs = data['numLEDs']
         self.ip = None
+        self.online = False
         self.schema = schema
 
     def to_dict(self):

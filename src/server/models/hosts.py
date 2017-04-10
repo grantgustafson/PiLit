@@ -9,23 +9,32 @@ class Hosts:
     _shared_state = {}
     _instantiated = False
 
-    def __init__(self):
+    def __init__(self, modules):
         self.__dict__ = self._shared_state
         if not self._instantiated:
             self._load_hosts()
             self._host_status = {}
+            self._modules = modules
             self._is_detecting = False
             self._instantiated = True
         self._detect()
 
     def _get_status(self, hostname):
+        module = self._modules.get(name=hostname)
         try:
             r = requests.get(URL.format(hostname))
             print '{} online'.format(hostname)
             self._host_status[hostname] = True
+
+            if not module:
+                self._modules.add_unconfigured_host(hostname, '0.0.0.3')
         except requests.ConnectionError as ce:
             print '{} not online'.format(hostname)
             self._host_status[hostname] = False
+
+        if module:
+            module.online = self._host_status[hostname]
+
 
     def _load_hosts(self):
         with open(HOSTS_PATH) as f:
@@ -43,8 +52,9 @@ class Hosts:
             threading.Timer(10, self._detect).start()
 
     def start_detection(self):
-        self._is_detecting = True
-        self._detect()
+        if not self._is_detecting:
+            self._is_detecting = True
+            self._detect()
 
     def stop_detection(self):
         self._is_detecting = False

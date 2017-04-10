@@ -1,5 +1,6 @@
 import os, json
 from light_module import Light_Module
+from hosts import Hosts
 from jsonschema import validate
 import jsonschema
 from config import (
@@ -21,6 +22,9 @@ class Modules:
             self._MAC_map = {}
             self._name_map = {}
             self._load_modules()
+            self._hosts = Hosts(self)
+            self._unconfigured_hosts = {}
+            self._hosts.start_detection()
             self._instantiated = True
 
     def update_modules(self):
@@ -28,6 +32,14 @@ class Modules:
         for module in self.modules:
             self._name_map[module.name] = module
         self._write_modules()
+
+    def add_unconfigured_host(self, mac, ip):
+        self._unconfigured_hosts[mac] = ip
+
+    def get_unconfigured_json(self):
+        return [{'MAC': k,
+                'ip' : self._unconfigured_hosts[k],
+                'name' : k } for k in self._unconfigured_hosts]
 
     def create(self, data):
         if self.validate_module(data):
