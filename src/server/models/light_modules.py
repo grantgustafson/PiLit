@@ -20,7 +20,7 @@ class Modules:
             self._check_environ()
             self._load_schema()
             self._MAC_map = {}
-            self._name_map = {}
+            self._hostname_map = {}
             self._load_modules()
             self._hosts = Hosts(self)
             self._unconfigured_hosts = {}
@@ -28,20 +28,21 @@ class Modules:
             self._instantiated = True
 
     def update_modules(self):
-        self._name_map = {}
+        self._hostname_map = {}
         for module in self.modules:
-            self._name_map[module.name] = module
+            self._hostname_map[module.hostname] = module
         self._write_modules()
 
-    def add_unconfigured_host(self, name, mac, ip):
-        self._unconfigured_hosts[mac] = (name, ip)
+    def add_unconfigured_host(self, hostname, mac, ip):
+        self._unconfigured_hosts[mac] = (hostname, ip)
 
     def _unconfigured_to_json(self, mac):
         return {'MAC': mac,
                 'ip' : self._unconfigured_hosts[mac][1],
-                'name' : self._unconfigured_hosts[mac][0]}
+                'hostname' : self._unconfigured_hosts[mac][0]}
 
     def get_unconfigured_json(self):
+        print self._unconfigured_hosts
         return [self._unconfigured_to_json(k) for k in self._unconfigured_hosts]
 
     def get_host(self, name):
@@ -56,21 +57,21 @@ class Modules:
             self.modules.append(module)
             self._write_modules()
             self._MAC_map[module.MAC] = module
-            self._name_map[module.name] = module
+            self._hostname_map[module.hostname] = module
             return module
         return None
 
     def delete(self, module):
         self.modules.remove(module)
         del self._MAC_map[module.MAC]
-        del self._name_map[module.name]
+        del self._hostname_map[module.hostname]
         self._write_modules()
 
-    def get(self, MAC=None, name=None):
+    def get(self, MAC=None, hostname=None):
         if MAC and MAC in self._MAC_map:
             return self._MAC_map[MAC]
-        if name and name in self._name_map:
-            return self._name_map[name]
+        if hostname and hostname in self._hostname_map:
+            return self._hostname_map[hostname]
         return None
 
     def _load_modules(self):
@@ -84,7 +85,7 @@ class Modules:
             for data in module_json:
                 module = Light_Module(data, self.schema)
                 self._MAC_map[module.MAC] = module
-                self._name_map[module.name] = module
+                self._hostname_map[module.hostname] = module
                 self.modules.append(module)
         except ValueError, e:
             # empty or erroneous module file

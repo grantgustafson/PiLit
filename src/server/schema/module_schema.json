@@ -5,6 +5,17 @@
     "hostname" : {"type" : "string"},
     "MAC" : {"type" : "string"},
     "numLEDs" : {"type" : "number"},
-    "location" : {"type" : "string"}
+    "location" : {"type" : "string"},
+    "mapping" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "startpixel" : "number",
+          "numpixels" : "number",
+          "forwards" : "boolean"
+          }
+        }
+      }
   }
 }

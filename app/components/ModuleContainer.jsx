@@ -35,10 +35,10 @@ export default class ModuleContainer extends React.Component {
           </div>
           <div className="row">
           {this.state.modules.map(function(module) {
-            return <Module key={module.name} module={module}/>
+            return <Module key={module.hostname} module={module}/>
           })}
           {this.state.unconfiguredModules.map(function(module) {
-            return <UnconfiguredModule key={module.name} module={module}/>
+            return <UnconfiguredModule key={module.hostname} module={module}/>
           })}
           </div>
         </div>

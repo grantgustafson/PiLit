@@ -7,7 +7,7 @@ export default class ModuleSetup extends React.Component{
 
   constructor(props) {
     super(props);
-    this.state = {module: null};
+    this.state = {module: null, error: null, message: null};
   }
 
     componentWillMount() {
@@ -26,6 +26,7 @@ export default class ModuleSetup extends React.Component{
         } else {
           // TODO handle no host found error
           console.log('Couldnt find host');
+          self.setState({error: 'Could not find host ' + self.props.match.params.id});
         }
       });
       } else {
@@ -33,10 +34,13 @@ export default class ModuleSetup extends React.Component{
       }
     }
 
-    handleSubmit() {
+    handleSubmit(e) {
+      e.preventDefault();
       let name = ReactDOM.findDOMNode(this.refs.name).value;
       let location = ReactDOM.findDOMNode(this.refs.location).value;
       let numLEDs = parseInt(ReactDOM.findDOMNode(this.refs.numLEDs).value);
+      let mac = this.state.module.MAC;
+      let hostname = this.state.module.hostname;
       let data = {name: name, location: location, numLEDs: numLEDs};
       console.log(data);
       fetch('/module_setup', {
@@ -48,33 +52,60 @@ export default class ModuleSetup extends React.Component{
         body: JSON.stringify(data)
       }).then(function(response) {
         return response.json();
-      }).then(this.handleResponse)
+      }).then(this.handleResponse.bind(this))
 
       return false;
     }
 
+    renderError() {
+      return (
+      <div className="alert alert-danger" role="alert">
+       <strong>Error: </strong> {this.state.error}
+      </div>
+    )
+    }
+
+    renderMessage() {
+      return (
+      <div className="alert alert-success" role="alert">
+       {this.state.message}
+      </div>
+    )
+    }
+
     handleResponse(j) {
-      console.log("handling response");
+      if (j.success) this.setState({message: j.message});
+      return false;
+    }
+
+    flash() {
+      fetch('/flash_module/' + this.state.module.hostname);
     }
 
     render() {
       console.log(this.state);
-      if (!this.state.module) return <div>Loading...</div>
+      if (!this.state.module) {
+        if (this.state.error) {
+          return this.renderError()
+       } else return <div>Loading...</div>
+      }
         return (
              <div className="setup-container">
                <div>
                  <Link to="/">&lt; Back to Modules</Link>
                </div>
+               {this.state.error && this.renderError()}
                <div className="jumbotron text-center">
                  <div className="container">
-                   <h1 className="display-3">Configure {this.state.module.name}</h1>
+                   <h1 className="display-3">Configure {this.state.module.hostname}</h1>
                    <p>{this.state.module.MAC} {this.state.module.ip}</p>
-                   <button className="btn btn-secondary">Flash Strip</button>
+                   <button className="btn btn-secondary" onClick={this.flash.bind(this)}>Flash Strip</button>
                  </div>
                </div>
+               {this.state.message && this.renderMessage()}
                <div className="row justify-content-md-center">
                  <div className="col-md-6">
-                   <form onSubmit={() => this.handleSubmit()}>
+                   <form onSubmit={(e) => this.handleSubmit(e)}>
                     <div className="form-group">
                       <label htmlFor="nameInput">Name</label>
                       <input type="text" name="name" className="form-control" ref="name" id="nameInput" />

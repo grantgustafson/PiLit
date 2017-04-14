@@ -8,6 +8,7 @@ MODULE_SCHEMA_PATH = 'schema/module_schema.json'
 MODULE_FILE_PATH = 'modules.json'
 
 HOSTS_PATH = 'hosts.txt'
+OPC_PORT = 7890
 
 LOG_CONFIG = {'version': 1,
               'formatters': {

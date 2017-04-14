@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from jsonschema import validate
 import json
+from models.flash import Flash
 from models.light_modules import Modules
 
 from config import (
@@ -40,9 +41,16 @@ def create_or_update_module(data):
 @module_service.route('/module_setup', methods=['POST'])
 def setup():
     print json.loads(request.data)
-    return jsonify({'success' : True})
+    return jsonify({'success' : True, 'message': 'Successfully updated module'})
 
-
+@module_service.route('/flash_module/<hostname>')
+def flash(hostname):
+    module = modules.get(hostname=hostname)
+    if module:
+        module.flash()
+    elif modules.get_host(hostname):
+        Flash(hostname).start()
+    return jsonify({'success': True})
 
 def get_module_ips():
     return module_ips
