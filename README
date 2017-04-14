@@ -1,0 +1,11 @@
+app/:
+  This contains the react front end code
+
+src/server:
+  All the coordinating server code. run the server with "python coordinator.py"
+
+src/client:
+  The Light Module server code
+
+src/lighting:
+  The code that handles light control and updates
