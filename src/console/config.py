@@ -1,12 +1,16 @@
 import logging, logging.config
 import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 CURR_DIR = os.path.dirname(os.path.abspath(__file__))
 LOGGING_DIR = os.path.normpath(os.path.join(CURR_DIR, 'logs'))
 assert os.path.isdir(LOGGING_DIR)
 
-MODULE_SCHEMA_PATH = 'schema/module_schema.json'
-MODULE_FILE_PATH = 'modules.json'
 
+DB_URI = 'sqlite:///db.db'
+
+engine =create_engine(DB_URI)
+Session = sessionmaker(bind=engine)
 HOSTS_PATH = 'hosts.txt'
 OPC_PORT = 7890
 

@@ -38,10 +38,8 @@ export default class ModuleSetup extends React.Component{
       e.preventDefault();
       let name = ReactDOM.findDOMNode(this.refs.name).value;
       let location = ReactDOM.findDOMNode(this.refs.location).value;
-      let numLEDs = parseInt(ReactDOM.findDOMNode(this.refs.numLEDs).value);
-      let mac = this.state.module.MAC;
       let hostname = this.state.module.hostname;
-      let data = {name: name, location: location, numLEDs: numLEDs};
+      let data = {name: name, location: location, hostname: hostname};
       console.log(data);
       fetch('/module_setup', {
         method: 'POST',
@@ -98,7 +96,7 @@ export default class ModuleSetup extends React.Component{
                <div className="jumbotron text-center">
                  <div className="container">
                    <h1 className="display-3">Configure {this.state.module.hostname}</h1>
-                   <p>{this.state.module.MAC} {this.state.module.ip}</p>
+                   <p>{this.state.module.ip}</p>
                    <button className="btn btn-secondary" onClick={this.flash.bind(this)}>Flash Strip</button>
                  </div>
                </div>
@@ -113,10 +111,6 @@ export default class ModuleSetup extends React.Component{
                     <div className="form-group">
                       <label htmlFor="locationInput">Location</label>
                       <input type="text" className="form-control" ref="location" id="locationInput" />
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="numLEDsInput">Number of LEDs</label>
-                      <input type="number" name="numLEDs" className="form-control" ref="numLEDs" id="numLEDsInput" />
                     </div>
                     <button type="submit" className="btn btn-primary">Submit</button>
                   </form>

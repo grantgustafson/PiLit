@@ -10,29 +10,34 @@ class Hosts:
     _shared_state = {}
     _instantiated = False
 
-    def __init__(self, modules):
+    def __init__(self):
         self.__dict__ = self._shared_state
         if not self._instantiated:
             self._load_hosts()
-            self._host_status = {}
-            self._modules = modules
+            self.online_hosts = {}
             self._is_detecting = False
             self._instantiated = True
+            self.start_detection()
+
+    def get_host_dict(self, name):
+        if name in self.online_hosts:
+            return {'ip' : self.online_hosts[name],
+                    'hostname': name}
+        else:
+            return None
 
     def _get_status(self, hostname):
-        module = self._modules.get(hostname=hostname)
         try:
             r = requests.get(URL.format(hostname))
             data = r.json()
-            self._host_status[hostname] = True
-            if not module:
-                self._modules.add_unconfigured_host(hostname, data['MAC'], data['ip'])
-        except requests.ConnectionError as ce:
-            self._host_status[hostname] = False
-            self._modules.add_unconfigured_host('test host', 'de:ad:be:ef:01', '10.0.0.5')
+            self.online_hosts[hostname] = data['ip']
 
-        if module:
-            module.online = self._host_status[hostname]
+        except requests.ConnectionError as ce:
+            if hostname == 'testhost':
+                self.online_hosts[hostname] = '10.0.0.5'
+            elif hostname in self.online_hosts:
+                del self.online_hosts[hostname]
+
 
 
     def _load_hosts(self):
