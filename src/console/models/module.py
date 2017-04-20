@@ -1,21 +1,26 @@
 import os
 from jsonschema import validate
 from math import sin, pi
-from sqlalchemy.ext.declarative import declarative_base
+
+from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, orm
+from sqlalchemy.orm import relationship
+from segment import Segment
 from config import (
     LOGGER,
+    Base
 )
-Base = declarative_base()
 
-class Module(Base):
+
+class LightModule(Base):
 
     __tablename__ = 'modules'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(64), nullable=True)
     hostname = Column(String(64), nullable=False)
     location = Column(String(64), nullable=False)
+    name = Column(String(64), nullable=True)
+    segments = relationship('Segment', back_populates='light_module', lazy='joined')
 
 
     @orm.reconstructor
@@ -31,13 +36,15 @@ class Module(Base):
         data['ip'] = self.ip
         return data
 
-
-    def flash(self):
-        print 'flashing module {}'.format()
-        threading.thread(target=self.flash_thread, args=(0.0,)).start()
+    def render(self, time):
+        data = []
+        for segment in self.segments:
+            start = segment.module_startpixel
+            data += [(0,0,0)] * (start - len(data))
+            data += segment.render(time)
+        return data
 
     def __repr__(self):
-        return '<Module {} ({}) location: {} numLEDs: {}'.format(self.name,
-                                                                 self.MAC,
-                                                                 self.location,
-                                                                 self.numLEDs)
+        return '<Module {} ({}) location: {}'.format(self.name,
+                                                     self.hostname,
+                                                     self.location)

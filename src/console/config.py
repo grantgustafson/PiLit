@@ -1,7 +1,8 @@
 import logging, logging.config
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.ext.declarative import declarative_base
 CURR_DIR = os.path.dirname(os.path.abspath(__file__))
 LOGGING_DIR = os.path.normpath(os.path.join(CURR_DIR, 'logs'))
 assert os.path.isdir(LOGGING_DIR)
@@ -10,7 +11,8 @@ assert os.path.isdir(LOGGING_DIR)
 DB_URI = 'sqlite:///db.db'
 
 engine =create_engine(DB_URI)
-Session = sessionmaker(bind=engine)
+Session = scoped_session(sessionmaker(bind=engine))
+Base = declarative_base()
 HOSTS_PATH = 'hosts.txt'
 OPC_PORT = 7890
 

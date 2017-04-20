@@ -112,7 +112,7 @@ export default class ModuleSetup extends React.Component{
                       <label htmlFor="locationInput">Location</label>
                       <input type="text" className="form-control" ref="location" id="locationInput" />
                     </div>
-                    <button type="submit" className="btn btn-primary">Submit</button>
+                    <button type="submit" className="btn btn-primary">Save</button>
                   </form>
                 </div>
               </div>

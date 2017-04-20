@@ -1,9 +1,10 @@
 import requests
 import threading
 from config import HOSTS_PATH
-import signal
+
 
 URL = 'http://{}.local:8123/status'
+TIMEOUT = 3.0
 
 class Hosts:
 
@@ -28,8 +29,9 @@ class Hosts:
 
     def _get_status(self, hostname):
         try:
-            r = requests.get(URL.format(hostname))
+            r = requests.get(URL.format(hostname), timeout=TIMEOUT)
             data = r.json()
+            print '{} is online!'.format(hostname)
             self.online_hosts[hostname] = data['ip']
 
         except requests.ConnectionError as ce:
@@ -46,6 +48,7 @@ class Hosts:
         print self._hosts
 
     def _detect(self):
+        print self.online_hosts
         for host in self._hosts:
             threading.Thread(target=self._get_status, args=(host,)).start()
         self._detect_timer()

@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 import json
 from models.flash import Flash
-from models.module import Module
+from models.module import LightModule
 from hosts import Hosts
 
 from config import (
@@ -42,7 +42,7 @@ def create_or_update_module(data):
     name = data['name']
     location = data['location']
     hostname = data['hostname']
-    module = Module(name=name, location=location, hostname=hostname)
+    module = LightModule(name=name, location=location, hostname=hostname)
     session.add(module)
     session.commit()
 
@@ -58,6 +58,3 @@ def setup():
 def flash(hostname):
     h = hosts.get_online_hosts
     return jsonify({'success': True})
-
-def get_module_ips():
-    return module_ips
