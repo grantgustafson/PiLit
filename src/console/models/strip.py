@@ -38,26 +38,20 @@ class Strip(Base):
         return tuple([x * 255 for x in hsv_to_rgb(hsv[0], hsv[1], hsv[2])])
 
     def filter_controls(self):
-        for ctrls in [self.color_controls, self.intensity_controls, self.combo_controls]:
-            new_ctrls = []
-            for ctrl in ctrls:
-                if ctrl.is_finished():
-                    new_ctrls += ctrl.nextc
-            ctrls = filter(lambda c: not c.is_finished(), ctrls)
-            ctrls += new_ctrls
-
+        self.color_controls = filter(lambda c: not c.is_finished(), self.color_controls)
+        self.intensity_controls = filter(lambda c: not c.is_finished(), self.intensity_controls)
+        self.combo_controls = filter(lambda c: not c.is_finished(), self.combo_controls)
     def compile(self, time):
         if (self.last_update == time):
             return
 
         if len(self.combo_controls) == 0 and len(self.color_controls) == 0:
-            self.compiled_rgb = [(0,0,0)] * self.length
             return
 
         if len(self.combo_controls) > 0:
             for control in self.combo_controls:
                 self.hsvs = control.update(time)
-                self.compiled_rgb = map(lambda c: self.hsvs_to_rgbs, self.h)
+                self.compiled_rgb = map(lambda c: self.hsvs_to_rgbs(c), self.hsvs)
             self.filter_controls()
             return
 

@@ -1,9 +1,14 @@
 from light_engine import LightEngine
 from models.module import LightModule
 from models.strip import Strip
-from lighting.wave import Wave
+from lighting.wave import Wave, GradientWave, StandingWave
 from lighting.color_transition import ColorTransition
 from lighting.intensity_wave import IntensityWave
+from lighting.gradient import Gradient
+from lighting.basic import SingleIntensity, SingleColor
+from lighting.strobe import Strobe
+from lighting.smooth_strobe import SmoothStrobe
+from lighting.kf_intensities import KFIntensities
 from config import Session
 import time
 
@@ -25,9 +30,11 @@ if __name__ == '__main__':
     #         strip.effects.append(Wave(length=strip.length))
     #     time.sleep(3)
 
-    time.sleep(2)
-    engine = LightEngine(modules)
+    time.sleep(1)
+    engine = LightEngine(modules, refresh_rate=4)
     print 'beginning test'
+    kf = KFIntensities([(2.0, 1.0), (4, .5), (6, 1)])
     for strip in strips:
-        strip.effects.append(ColorTransition(length=strip.length))
-    time.sleep(6)
+        strip.add_intensity_control(kf)
+        strip.add_color_control(SingleColor())
+    time.sleep(14)

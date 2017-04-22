@@ -29,7 +29,10 @@ session.close()
 
 time.sleep(2)
 engine = LightEngine(modules, refresh_rate=30, debug=False)
-
+r = requests.get(URL)
+data = r.json()
+print data
+exit()
 print "start color"
 for strip in strips:
     strip.add_color_control(ON_COLOR)
