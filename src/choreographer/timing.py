@@ -2,7 +2,8 @@ import time
 from subprocess import Popen, PIPE
 
 TIME_SCRIPT = 'scripts/current_pos.scpt'
-DIFF = -0.53
+DIFF = 0.0
+#DIFF = -0.53
 
 class SpotifyTime:
 

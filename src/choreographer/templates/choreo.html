@@ -9,14 +9,8 @@
 </head>
 <body>
     <div class="container-fluid" id="main" data-track="{{ track_id }}">
-      <div><p id="song"></p></div>
-      <div><p id="time"></p></div>
-      <button id="play" class="btn btn-primary" >Play</button>
-      <button id="pause" class="btn btn-primary">Pause</button>
-      <input id="time-input"></input>
-      <script src="{{ url_for('static', filename='bundle.js') }}"></script>
-      <canvas id="vis"> </canvas>
     </div>
+    <script src="{{ url_for('static', filename='bundle.js') }}"></script>
 
 </body>
 </html>

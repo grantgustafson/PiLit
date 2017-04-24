@@ -31,10 +31,10 @@ if __name__ == '__main__':
     #     time.sleep(3)
 
     time.sleep(1)
-    engine = LightEngine(modules, refresh_rate=4)
+    engine = LightEngine(modules, refresh_rate=60)
     print 'beginning test'
-    kf = KFIntensities([(2.0, 1.0), (4, .5), (6, 1)])
+    w = StandingWave(speed=14, width=128)
     for strip in strips:
-        strip.add_intensity_control(kf)
+        strip.add_intensity_control(w)
         strip.add_color_control(SingleColor())
     time.sleep(14)

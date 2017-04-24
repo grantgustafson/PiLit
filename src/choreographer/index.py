@@ -5,8 +5,13 @@ from spotify import Spotify
 
 index = Blueprint('index', __name__)
 spotify = Spotify()
+META_FILE = 'meta.json'
 
 @index.route('/')
 def home():
-    tracks = spotify.get_all_analysis_meta()
+    tracks = load_meta()
     return render_template('index.html', tracks = tracks)
+
+def load_meta():
+    with open(META_FILE) as f:
+        return json.load(f)

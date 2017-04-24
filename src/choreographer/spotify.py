@@ -10,6 +10,9 @@ CLIENTSECRET='9041f1578718450b9cf327fb4a24545d'
 CURR_TRACK_SCRIPT='scripts/current_track.scpt'
 CURR_POS_SCRIPT='scripts/current_pos.scpt'
 ANALYSIS_DATA_PATH = 'analysis_data/'
+MY_ID = '12140715906'
+LIT_ID = '6qG0tzNkyfvP5IVvRRuc7b'
+META_FILE = 'meta.json'
 
 class Spotify:
 
@@ -108,7 +111,27 @@ class Spotify:
         track_id, _ = proc.communicate()
         return track_id.strip().split(':')[-1]
 
+    def print_playlists(self):
+        path = self.prefix + 'users/{}/playlists'.format(MY_ID)
+        data = self.my_get(path)
+        playlists = [(i['name'], i['id']) for i in data['items']]
+        print
+
+    def get_tracks_in_playlist(self):
+        url = self.prefix + 'users/{}/playlists/{}'.format(MY_ID, LIT_ID)
+        data = self.my_get(url)
+        tracks_data = data['tracks']['items']
+        tracks = [{'name': t['track']['name'],
+                   'id' : t['track']['id'],
+                   'artists' : ', '.join([a['name'] for a in t['track']['artists']])} for t in tracks_data]
+        return tracks
+
+    def write_track_meta(self):
+        tracks = self.get_tracks_in_playlist()
+        with open(META_FILE, 'w') as f:
+            json.dump(tracks, f, indent=4)
+
 
 if __name__ == '__main__':
     s = Spotify()
-    print s.get_all_analysis_meta()
+    print s.write_track_meta()

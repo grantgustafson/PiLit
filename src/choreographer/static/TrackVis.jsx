@@ -1,11 +1,15 @@
 import TrackData from './trackdata.jsx';
 import Segment from './Segment.jsx';
-let REFRESH = 60;
+import CanvasKFs from './CanvasKFs.jsx';
+import KeyFrame from './KF.jsx';
+
+let REFRESH = 50;
 let WINDOW = 10.0;
 
 export default class TrackVis {
-  constructor(td) {
-    this.td = td;
+  constructor(data, id) {
+    this.data = data;
+    this.id = id;
     this.canvas = document.getElementById('vis');
     this.ctx = this.canvas.getContext('2d');
     let bounds = this.canvas.getBoundingClientRect();
@@ -19,34 +23,44 @@ export default class TrackVis {
     this.canvas.width = this.width;
     this.canvas.height = this.height;
     this.xScale = this.width / WINDOW;
-    console.log(this.td);
+    console.log(this.data);
     this.getPos();
+    this.canvasKFs = new CanvasKFs(this, 320);
     this.timeBanner = document.getElementById('time');
     this.songBanner = document.getElementById('song');
     this.isPlaying = true;
     this.segments = [];
 
-
     this.init();
   }
 
   init() {
-    this.songBanner.innerHTML = this.td.data.analysis.track.name;
+    this.songBanner.innerHTML = this.data.analysis.track.name;
 
     var maxSegDB = -60.0;
-    for (var idx in this.td.data.analysis.segments) {
-      let db = this.td.data.analysis.segments[idx].loudness_max;
+    for (var idx in this.data.analysis.segments) {
+      let db = this.data.analysis.segments[idx].loudness_max;
       if (db > maxSegDB) maxSegDB = db;
     }
 
-    for (var idx in this.td.data.analysis.segments) {
-      let d = this.td.data.analysis.segments[idx];
+    for (var idx in this.data.analysis.segments) {
+      let d = this.data.analysis.segments[idx];
       this.segments.push(new Segment(d, 150, maxSegDB));
     }
 
     document.getElementById('play').onclick = this.play.bind(this);
     document.getElementById('pause').onclick = this.pause.bind(this);
     document.getElementById('time-input').onchange = this.updateTime.bind(this);
+    document.getElementById('sync').onclick = this.getPos.bind(this);
+    setInterval(this.draw.bind(this), 1000/REFRESH);
+  }
+
+  addKF(kf) {
+    this.canvasKFs.addKF(kf);
+  }
+
+  removeKF(kf) {
+    this.canvasKFs.removeKF(kf);
   }
 
   timeToPixels(time) {
@@ -65,18 +79,22 @@ export default class TrackVis {
     }).then(function(j) {
       self.pos = +j.pos;
       console.log('pos: ' + self.pos);
-      setInterval(self.draw.bind(self), 1000/REFRESH);
+      self.timeBanner.innerHTML = Math.round(self.pos * 100) / 100.0;
       // setTimeout(self.draw.bind(self), 1000);
     })
   }
 
   drawSegments() {
+    this.ctx.beginPath();
     for (var idx in this.segments) {
       this.segments[idx].drawSelf(this);
     }
+    this.ctx.closePath();
     this.ctx.stroke();
 
   }
+
+
 
   drawBeats() {
     this.ctx.beginPath();
@@ -84,8 +102,8 @@ export default class TrackVis {
     let barheight = 50;
     this.ctx.lineWidth="2";
     this.ctx.strokeStyle="red";
-    for (var i in this.td.data.analysis.beats) {
-      let beat = this.td.data.analysis.beats[i];
+    for (var i in this.data.analysis.beats) {
+      let beat = this.data.analysis.beats[i];
       let start_time = beat.start;
       let x = this.x(start_time - this.pos);
       if (x < this.width && x > -50.0) {
@@ -101,8 +119,8 @@ export default class TrackVis {
     let barheight = 50;
     this.ctx.lineWidth="2";
     this.ctx.strokeStyle="blue";
-    for (var i in this.td.data.analysis.bars) {
-      let bar = this.td.data.analysis.bars[i];
+    for (var i in this.data.analysis.bars) {
+      let bar = this.data.analysis.bars[i];
       let start_time = bar.start;
       let x = this.x(start_time - this.pos);
       let barWidth = this.timeToPixels(bar.duration) - 10;
@@ -118,8 +136,8 @@ export default class TrackVis {
     this.ctx.beginPath();
     this.ctx.moveTo(this.x(0), 0);
     this.ctx.lineTo(this.x(0), this.height);
-      this.ctx.closePath();
-      this.ctx.stroke();
+    this.ctx.closePath();
+    this.ctx.stroke();
   }
 
   update() {
@@ -130,7 +148,7 @@ export default class TrackVis {
       this.lastUpdate = currTime;
       this.timeBanner.innerHTML = Math.round(this.pos * 100) / 100.0;
     }
-    if (this.pos > this.td.data.analysis.track.duration) {
+    if (this.pos > this.data.analysis.track.duration) {
       this.play = false;
     }
   }
@@ -161,6 +179,7 @@ export default class TrackVis {
     this.drawBeats();
     this.drawBars();
     this.drawSegments();
+    this.canvasKFs.draw();
     this.drawCurrPos();
   }
 }
