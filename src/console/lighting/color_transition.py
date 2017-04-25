@@ -21,6 +21,7 @@ class ColorTransition:
         self.s_rate = (end_sat - start_sat) / duration
         self.lifetime = duration
         self.nextc = nextc
+        self.type = 'color'
 # d = r*t
 # 2pi = r * p
 

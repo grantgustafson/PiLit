@@ -19,9 +19,11 @@ class Strip(Base):
     id = Column(Integer, primary_key=True)
     length = Column(Integer, nullable=False)
     segments = relationship('Segment', back_populates='strip', lazy='joined')
+    name = Column(String(64), nullable=False)
 
-    def __init__(self, length):
+    def __init__(self, length, name):
         self.length = length
+        self.name = name
         self._setup()
 
 
@@ -69,27 +71,23 @@ class Strip(Base):
         self.filter_controls()
         self.compiled_rgb = map(lambda hsv: self.hsvs_to_rgbs(hsv), zip(H, S, V))
 
-    def clear_add_color_control(self, control):
-        self.color_controls = [control]
-        control.length = self.length
 
-    def add_color_control(self, control):
+    def add_color_control(self, control, clear=False):
+        if clear:
+            self.color_controls = []
         self.color_controls.append(control)
         control.length = self.length
 
-    def clear_add_intensity_control(self, control):
-        self.intensity_controls = [control]
-        control.length = self.length
-
-    def add_intensity_control(self, control):
+    def add_intensity_control(self, control, clear=False):
+        if clear:
+            self.intensity_controls = []
         self.intensity_controls.append(control)
         control.length = self.length
 
-    def clear_add_combo_control(self, control):
-        self.combo_controls = [control]
-        control.length = self.length
 
-    def add_combo_control(self, control):
+    def add_combo_control(self, control, clear=False):
+        if clear:
+            self.combo_controls = []
         self.combo_controls.append(control)
         control.length = self.length
 

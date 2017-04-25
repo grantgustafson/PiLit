@@ -1,5 +1,6 @@
 from util import calc_c_rate
-class Gradient:
+from control import Control
+class Gradient(Control):
 
     def __init__(self,
                  c1 = 0.0,
@@ -26,6 +27,7 @@ class Gradient:
         self.duration = duration
         self.last_update = None
         self.start_time = None
+        self.type = 'color'
 
         self.c1_rate = 0.0
         if self.end_c1:

@@ -10,6 +10,7 @@ class KFIntensities:
         self.start_time = None
         self.nextKF = kfs[0]
         self.last_update = None
+        self.type = 'intensity'
 
     def move_frames(self, currtime):
         t_delta = currtime - self.start_time
@@ -33,7 +34,6 @@ class KFIntensities:
         t =  time - (self.prevKF[0] + self.start_time)
 
         i = .5*(1.0-cos(t*pi/deltaT))*deltaI + i0
-        print 'i ', i
         return [i] * self.length
 
     def is_finished(self):

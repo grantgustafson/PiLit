@@ -10,6 +10,7 @@ class Wave:
         self.length = 64
         self.pos = start_pos
         self.last_update = None
+        self.type = 'intensity'
 
     def update(self, time):
         if self.last_update:
@@ -49,6 +50,7 @@ class StandingWave:
         self.duration = duration
         self.start_time = None
         self.last_update = None
+        self.type = 'intensity'
 
     def update(self, time):
         if self.last_update:
@@ -93,6 +95,7 @@ class GradientWave:
         self.sat = sat
         self.c2 = c2
         self.c_rate = calc_c_rate(c2, c1, width, not forwards)
+        self.type = 'combo'
 
     def update(self, time):
         if self.last_update:

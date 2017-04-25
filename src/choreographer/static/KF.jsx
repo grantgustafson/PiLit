@@ -1,6 +1,6 @@
 export default class KeyFrame {
   constructor(time, intensity, description, idx) {
-    this.time = time;
+    this.time = Math.round(time * 1000) / 1000.0;
     this.intensity = intensity;
     this.description = description || '';
     this.idx = idx || 0;

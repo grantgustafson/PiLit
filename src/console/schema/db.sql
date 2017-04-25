@@ -10,6 +10,7 @@ CREATE TABLE modules (
 CREATE TABLE strips (
 	id INTEGER NOT NULL, 
 	length INTEGER NOT NULL, 
+	name VARCHAR(64) NOT NULL, 
 	PRIMARY KEY (id)
 );
 

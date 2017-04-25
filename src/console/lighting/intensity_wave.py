@@ -13,6 +13,7 @@ class IntensityWave:
         self.rate = 2 * pi / period
         self.x = 0.0
         self.lifetime = lifetime
+        self.type = 'intensity'
 # d = r*t
 # 2pi = r * p
 
@@ -24,7 +25,7 @@ class IntensityWave:
         else:
             self.last_update = time
             self.start_time = time
-        return .5 * (1 + cos(self.x - pi)) * self.range + self.min
+        return [.5 * (1 + cos(self.x - pi)) * self.range + self.min] * self.length
 
     def is_finished(self):
         return self.last_update - self.start_time > self.lifetime
