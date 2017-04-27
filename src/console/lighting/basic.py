@@ -1,10 +1,9 @@
 class Color:
 
-    def __init__(self, hue=1.0, saturation=1.0, nextc=[]):
+    def __init__(self, hue=1.0, saturation=1.0):
         self.length = 64
         self.hue = hue
         self.saturation = saturation
-        self.nextc = nextc
         self.type = 'color'
 
     def update(self, _):
@@ -15,10 +14,9 @@ class Color:
 
 class Intensity:
 
-    def __init__(self, i=1.0, nextc=[]):
+    def __init__(self, i=1.0):
         self.length = 64
         self.i = i
-        self.nextc = nextc
         self.type = 'intensity'
 
     def update(self, _):

@@ -1,43 +1,45 @@
 
 from math import ceil, floor, cos, pi
+from util import calc_c_rate
 
 class ColorTransition:
+    @classmethod
+    def get_default():
+        return ColorTransition().__dict__
 
     def __init__(self,
-                 start_color=.45,
-                 end_color=.04,
-                 start_sat=1.0,
-                 end_sat=1.0,
-                 duration=5.0,
-                 nextc=[]):
+                 h1=.45,
+                 h2=.04,
+                 forwards=True,
+                 duration=10.0
+                 ):
         self.length = 64
-        self.last_update = None
-        self.start_time = None
-        self.color = start_color
-        self.end_color = end_color
-        self.sat = start_sat
-        self.end_sat = end_sat
-        self.c_rate = (start_color + end_color) / duration
-        self.s_rate = (end_sat - start_sat) / duration
-        self.lifetime = duration
-        self.nextc = nextc
+        self.forwards = forwards
+        self.h1 = h1
+        self.h2 = h2
+        self.duration = duration
         self.type = 'color'
+        self.last_update = None
+
+    def start(self):
+        self.color = self.h1
+        self.end_color = self.h2
+        self.c_rate = calc_c_rate(self.h1, self.h2, self.duration, self.forwards)
 # d = r*t
 # 2pi = r * p
 
     def update(self, time):
-        if self.last_update:
+        if self.last_update is not None:
             t_delta = time - self.last_update
             self.color = (self.color + self.c_rate * t_delta) % 1.0
-            self.sat += self.s_rate * t_delta
             self.last_update += t_delta
         else:
+            self.start()
             self.last_update = time
             self.start_time = time
-        if self.is_finished():
+        if self.last_update - self.start_time > self.duration:
             self.color = self.end_color
-            self.sat = self.end_sat
-        return zip([self.color] * self.length, [self.sat] * self.length)
+        return zip([self.color] * self.length, [1.0] * self.length)
 
     def is_finished(self):
-        return self.last_update - self.start_time >= self.lifetime
+        return False

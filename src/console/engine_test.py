@@ -5,10 +5,10 @@ from lighting.wave import Wave, GradientWave, StandingWave
 from lighting.color_transition import ColorTransition
 from lighting.intensity_wave import IntensityWave
 from lighting.gradient import Gradient
-from lighting.basic import SingleIntensity, SingleColor
-from lighting.strobe import Strobe
-from lighting.smooth_strobe import SmoothStrobe
+from lighting.basic import Intensity, Color
+from lighting.strobe import Strobe, SmoothStrobe
 from lighting.kf_intensities import KFIntensities
+from lighting.ripple import Ripple
 from config import Session
 import time
 
@@ -33,8 +33,8 @@ if __name__ == '__main__':
     time.sleep(1)
     engine = LightEngine(modules, refresh_rate=60)
     print 'beginning test'
-    w = StandingWave(speed=14, width=128)
+    r = Ripple(speed=2)
     for strip in strips:
-        strip.add_intensity_control(w)
-        strip.add_color_control(SingleColor())
+        strip.add_intensity_control(Ripple(speed=1, center = 60))
+        strip.add_color_control(Color())
     time.sleep(14)

@@ -39,7 +39,8 @@ class LightEngine:
             t.start()
             self.i += 1
             self.time_taken += time_taken
-            if self.debug and PRINT_RATE:
-                print 'Avg time taken: {}'.format(self.time_taken / self.i)
-                self.i = 0
-                self.time_taken = 0
+            if PRINT_RATE:
+                if self.i % self.refresh_rate == 0 :
+                    print 'Avg time taken: {}'.format(self.time_taken / self.i)
+                    self.i = 0
+                    self.time_taken = 0

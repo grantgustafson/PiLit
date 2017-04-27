@@ -2,17 +2,25 @@ from spotipy import oauth2
 from os.path import join, isfile
 from subprocess import Popen, PIPE
 from os import listdir
+from os.path import join
 import requests
 import json
+import os
+import time
+
+curr_path = os.path.dirname(os.path.abspath(__file__))
 
 CLIENTID='e20406e401e1456b920f6c18e2b7d0b1'
 CLIENTSECRET='9041f1578718450b9cf327fb4a24545d'
-CURR_TRACK_SCRIPT='scripts/current_track.scpt'
-CURR_POS_SCRIPT='scripts/current_pos.scpt'
-ANALYSIS_DATA_PATH = 'analysis_data/'
+CURR_TRACK_SCRIPT=join(curr_path, 'scripts/current_track.scpt')
+CURR_POS_SCRIPT=join(curr_path, 'scripts/current_pos.scpt')
+CURR_STATE_SCRIPT=join(curr_path, 'scripts/current_state.scpt')
+ANALYSIS_DATA_PATH = join(curr_path, 'analysis_data/')
 MY_ID = '12140715906'
 LIT_ID = '6qG0tzNkyfvP5IVvRRuc7b'
-META_FILE = 'meta.json'
+META_FILE = join(curr_path, 'meta.json')
+
+DIFF = 0.0
 
 class Spotify:
 
@@ -22,7 +30,7 @@ class Spotify:
         self.__dict__ = self._shared_state
         if not self._instantiated:
             auth = oauth2.SpotifyClientCredentials(client_id=CLIENTID, client_secret=CLIENTSECRET)
-            self._auth = auth.get_access_token()
+            self._auth = None
             self.prefix = 'https://api.spotify.com/v1/'
             self._instantiated = True
 
@@ -30,6 +38,8 @@ class Spotify:
         return {'Authorization': 'Bearer {0}'.format(self._auth)}
 
     def my_get(self, url):
+        if self._auth is None:
+            self._auth = auth.get_access_token()
         headers = self._auth_headers()
         headers['Content-Type'] = 'application/json'
         for i in range(5):
@@ -110,6 +120,19 @@ class Spotify:
         proc = Popen([CURR_TRACK_SCRIPT], stdout=PIPE, stderr=PIPE)
         track_id, _ = proc.communicate()
         return track_id.strip().split(':')[-1]
+
+    def is_playing(self):
+        proc = Popen([CURR_STATE_SCRIPT], stdout=PIPE, stderr=PIPE)
+        state, _ = proc.communicate()
+        return state == 'playing'
+
+    def get_player_pos(self):
+        curr_time = time.time()
+        proc = Popen([CURR_POS_SCRIPT], stdout=PIPE, stderr=PIPE)
+        pos, _ = proc.communicate()
+        t_delta = time.time() - curr_time
+        return float(pos.strip()) + DIFF - t_delta / 2.0
+
 
     def print_playlists(self):
         path = self.prefix + 'users/{}/playlists'.format(MY_ID)

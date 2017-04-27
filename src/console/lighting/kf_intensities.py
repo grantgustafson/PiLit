@@ -30,11 +30,14 @@ class KFIntensities:
         deltaT = self.nextKF[0] - self.prevKF[0]
         deltaI = self.nextKF[1] - self.prevKF[1]
         i0 = self.prevKF[1]
-
+        if deltaI == 0:
+            return [i0] * self.length
         t =  time - (self.prevKF[0] + self.start_time)
 
         i = .5*(1.0-cos(t*pi/deltaT))*deltaI + i0
         return [i] * self.length
 
     def is_finished(self):
+        if self.last_update is None:
+            return False
         return self.nextKF[0] <= self.last_update - self.start_time

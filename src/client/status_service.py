@@ -6,7 +6,7 @@ from net_info import get_hw_addr, get_ip_addr
 import json
 
 status_service = Blueprint('status_service', __name__)
-IFACE = 'eth0'
+IFACE = 'wlan0'
 
 
 @status_service.route('/status', methods=['GET'])

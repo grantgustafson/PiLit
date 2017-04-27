@@ -7,7 +7,6 @@ class Wave:
     def __init__(self, speed=1.0, width=20.0, start_pos=0.0):
         self.speed = speed
         self.width = width
-        self.length = 64
         self.pos = start_pos
         self.last_update = None
         self.type = 'intensity'
@@ -61,13 +60,15 @@ class StandingWave:
 
         I = [0] * self.length
         for i in range(self.length):
-            v = 0.5 + 0.25*sin(2*pi*i/self.width - self.omega) + \
-                           0.25*sin(2*pi*i/self.width + self.omega)
+            v = 0.5 + 0.25*sin(2*pi*i/self.width - self.omega*2*pi) + \
+                           0.25*sin(2*pi*i/self.width + self.omega*2*pi)
             I[i] = v*self.range + self.min_i
         return I
 
 
     def is_finished(self):
+        if self.last_update is None:
+            return False
         return self.last_update - self.start_time > self.duration
 
 

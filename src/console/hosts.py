@@ -31,7 +31,7 @@ class Hosts:
         try:
             r = requests.get(URL.format(hostname), timeout=TIMEOUT)
             data = r.json()
-            print '{} is online!'.format(hostname)
+            #print '{} is online!'.format(hostname)
             self.online_hosts[hostname] = data['ip']
 
         except requests.ConnectionError as ce:
@@ -48,7 +48,6 @@ class Hosts:
         print self._hosts
 
     def _detect(self):
-        print self.online_hosts
         for host in self._hosts:
             threading.Thread(target=self._get_status, args=(host,)).start()
         self._detect_timer()

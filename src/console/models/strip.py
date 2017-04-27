@@ -62,6 +62,7 @@ class Strip(Base):
         V = [0.0] * self.length
         for control in self.intensity_controls:
             for idx, v in enumerate(control.update(time)):
+
                  V[idx] += v
 
         for control in self.color_controls:
